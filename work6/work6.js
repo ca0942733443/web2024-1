@@ -2,6 +2,39 @@ const RB = ReactBootstrap;
 const { Alert, Card, Button, Table } = ReactBootstrap;
 
 class App extends React.Component {
+  
+  state = {
+    scene: 0,
+    user : null,
+}
+constructor(){
+    super();
+    firebase.auth().onAuthStateChanged((user)=>{
+        if (user) {
+          this.setState({user:user.toJSON()});
+        }else{
+          this.setState({user:null});
+       }
+    });    
+}
+
+
+google_login() {
+    // Using a popup.
+    var provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope("profile");
+    provider.addScope("email");
+    firebase.auth().signInWithPopup(provider);
+}
+
+
+google_logout(){
+    if(confirm("Are you sure?")){
+      firebase.auth().signOut();
+    }
+}
+
+  
   title = (
     <Alert variant="info">
       <b>Work6 :</b> Firebase
@@ -9,7 +42,7 @@ class App extends React.Component {
   );
   footer = (
     <div>
-      By 663380003-7 นายปฏิภาณ แก้วนวล สาขา IT<br />
+      By 663380158-8 นายดรัสวัต ยิ้มพิรัตน์ สาขา IT<br />
       College of Computing, Khon Kaen University
     </div>
   );
@@ -24,11 +57,17 @@ class App extends React.Component {
     stdphone: "",
   };
 
+
+
+
+
+
   render() {
     return (
       <Card>
         <Card.Header>{this.title}</Card.Header>
-        <Card.Body>
+        <LoginBox user={this.state.user} app={this}></LoginBox>
+          <Card.Body>
           <Button onClick={() => this.readData()}>Read Data</Button>
           <Button onClick={() => this.autoRead()}>Auto Read</Button>
           <div>
@@ -103,6 +142,24 @@ class App extends React.Component {
   }
 }
 
+
+function LoginBox(props) {
+  const u = props.user;
+  const app = props.app;
+  if (!u) {
+      return <div><Button onClick={() => app.google_login()}>Login</Button></div>
+  } else {
+      return <div>
+          <img src={u.photoURL} />
+          {u.email}<Button onClick={() => app.google_logout()}>Logout</Button></div>
+  }
+}
+
+
+
+
+
+
 function StudentTable({ data, app }) {
   return (
     <table className="table">
@@ -167,13 +224,14 @@ root.render(<App />);
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB_VAlxiVfh0trcSUwOqtlxAWOIpqgncT4",
-  authDomain: "web2567-57c62.firebaseapp.com",
-  projectId: "web2567-57c62",
-  storageBucket: "web2567-57c62.appspot.com",
-  messagingSenderId: "275902103745",
-  appId: "1:275902103745:web:76bc5d3930b58a70c15440",
-  measurementId: "G-3PQ6NZZFDN",
+  apiKey: "AIzaSyCCDEkdPoRpRRf4jaWG33fHkfXDync9ARk",
+  authDomain: "web2567-d36a9.firebaseapp.com",
+  databaseURL: "https://web2567-d36a9-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "web2567-d36a9",
+  storageBucket: "web2567-d36a9.firebasestorage.app",
+  messagingSenderId: "586965921921",
+  appId: "1:586965921921:web:02d1361912b740fe4f9d80",
+  measurementId: "G-1RDGHEF89F"
 };
 
 // Initialize Firebase
